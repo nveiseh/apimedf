@@ -1,0 +1,15 @@
+{% extends "base_generic.html" %}
+
+{% block TITLE %}Extended title from base_generic.html {% endblock %}
+# {{ poll }}
+
+{% block CONTENT %}
+
+<h1>{{ poll.question }}</h1>
+<ul>
+{% for choice in poll.choice_set.all %}
+    <li>{{ choice.choice_text }}</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

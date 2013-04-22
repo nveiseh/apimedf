@@ -2,6 +2,7 @@ import os
 # Django settings for apimedf project.
 
 DEBUG = True
+
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
