@@ -1,0 +1,18 @@
+{% extends "base_generic.html" %}
+
+{% block TITLE %}DETAILS PAGE {% endblock %}
+# {{ poll }}
+
+{% block CONTENT %}
+
+<h1>{{ poll.question }}</h1>
+
+<ul>
+{% for choice in poll.choice_set.all %}
+    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'portal:detail' poll.id %}">Vote again?</a>
+
+{% endblock %}

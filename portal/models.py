@@ -1,7 +1,8 @@
 #PACKAGES
 from django.db import models
-import datetime
 from django.utils import timezone
+import datetime
+
 
 
 #GLOBALS
@@ -11,7 +12,7 @@ from django.utils import timezone
 
 class Poll(models.Model):
     question = models.CharField(max_length = 200)
-    pub_date = models.DateField('Date Published')
+    pub_date = models.DateTimeField('Date Published')
     
     def __unicode__(self):
         return self.question
@@ -20,7 +21,8 @@ class Poll(models.Model):
         return self.pub_date
     
     def was_published_recently(self):
-        return True
+        return self.pub_date >= timezone.now() - datetime.timedelta(days = 1)
+    
     was_published_recently.admin_order_field = 'pub_date'
     was_published_recently.boolean = True
     was_published_recently.short_description = 'Published recently?'
