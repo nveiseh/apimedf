@@ -11,11 +11,11 @@ import datetime
 # Create your models here.
 
 class Poll(models.Model):
-    ent_name = models.CharField(max_length = 200)
+    question = models.CharField(max_length = 200)
     pub_date = models.DateTimeField('Date Published')
     
     def __unicode__(self):
-        return self.ent_name
+        return self.question
     
     def whatis_pub_date(self):
         return self.pub_date
