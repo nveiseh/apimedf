@@ -11,11 +11,11 @@ import datetime
 # Create your models here.
 
 class Poll(models.Model):
-    question = models.CharField(max_length = 200)
+    ent_name = models.CharField(max_length = 200)
     pub_date = models.DateTimeField('Date Published')
     
     def __unicode__(self):
-        return self.question
+        return self.ent_name
     
     def whatis_pub_date(self):
         return self.pub_date
@@ -31,6 +31,8 @@ class Poll(models.Model):
     #Makes the field and column specific to the display of this field of Poll, sexier
         #Broken line because of mismatch in data formats, from imported modules
         #return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+        
+    #EXTENTIONS: poll_id will refer to the id number of the enterprise
     
     
     

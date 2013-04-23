@@ -68,3 +68,28 @@ def vote(request, poll_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('portal:results', args=(p.id,)))
+    
+
+def csv_view(request, poll_id):
+    '''
+    To access this view: 0.0.0.0:8000/portal/1/csv_view
+    Through the portal app.
+    Addressing poll_id = 1
+    And want to download the CSV view.
+    
+    The Question is now, what information can/need extract given the poll_id
+    is the poll_id = enterprise_id, or is it = report_id?
+    TRY:
+    poll_id = enterprise_info...
+    choices = periodic financial reports
+    '''
+    import csv
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="MEDFClient001.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['First row', 'Foo', 'Bar', 'Baz'])
+    writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
+
+    return response
