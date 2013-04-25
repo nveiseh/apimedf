@@ -1,0 +1,150 @@
+1. Create Project Folder, with initial project (not necessarily an app!) inside of the same name
+Do this automatically by Aptana, or from the command line: django-admin.py startproject MEDF
+
+2. Start the server to verify it is working:
+python manage.py runserver
+Check server status, but going through webbrowser on http://127.0.0.1:8000/
+python manage.py runserver 8080
+python manage.py runserver 0.0.0.0:8000
+
+
+
+3. Setting up DATABASE
+If you plan to use a database, edit the DATABASES setting in MEDF/settings.py.
+Need to specify ENGINE and NAME:         
+'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+'NAME': '/Users/nimave/Desktop/SkyDrive/Aptana/MEDF_Project_Git/sqlite.db',                   
+Or, can use default path of default value, os.path.join(BASE_DIR, 'db.sqlite3'),
+
+For MySQL: Make sure you’ve created a database by this point. Do that with “CREATE DATABASE database_name;” 
+within your database’s interactive prompt.If you’re using SQLite, you don’t need to create anything beforehand - 
+the database file will be created automatically when it is needed.
+
+Check Installed Apps, that govern DB:
+
+Run the database by the following command: python manage.py syncdb
+
+4. Setting up NEW APP / and ADDING
+Start your first app by running python manage.py startapp [appname].
+This may be already done, but should be redone with each new app
+Example: python manage.py startapp portal
+To add the new app to the project, go to settings within MEDF, and add "portal" to INSTALLED_APPS
+
+5. Defining the Models within the APP, which determines DB structure, and UPDATE
+#CLASSES/MODELS
+class Enterprise(models.Model):
+    #Define variables within the class, that are unique to each Enterprise object, ie company
+    ent_name = models.CharField(max_length = 200)
+    inst_date = models.DateField('Date of Instantation with MEDF')
+    country = models.CharField(max_length = 100)...
+    .....
+    
+Creates new DB tables (Enterpise,...), with fields (ent_name, inst_date,...)
+
+
+To create the template of the new model in the form of DB tables: 
+python manage.py sql portal
+
+TO commit/sync those templates to the SQL DB:
+Now, run syncdb again to create those model tables in your database:
+python manage.py syncdb
+
+
+7. Just playing around the DB and API with the shell interface:
+python manage.py shell
+python manage.py sqlall portal #to see all of the sql commands run so far :)
+air-air:apimedf nimave$ python manage.py shell
+Python 2.7.2 (default, Jun 20 2012, 16:23:33) 
+[GCC 4.2.1 Compatible Apple Clang 4.0 (tags/Apple/clang-418.0.60)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> from portal.models import Poll, Choice
+>>> Poll.objects.all()
+[]
+>>> from django.utils import timezone
+>>> p = Poll(question = "What is new?", pub_date = timezone.now())
+>>> p.save()
+>>> p.id
+1
+>>> p.question
+'What is new?'
+>>> p.pub_date
+datetime.datetime(2013, 4, 22, 14, 58, 24, 710614, tzinfo=<UTC>)
+>>> p.question = "Whats up?"
+>>> p.save()
+>>> Poll.objects.all()
+[<Poll: Poll object>]
+>>> 
+
+
++++++++++++++++
+8. ADMIN setup
+-Change the settings.py file to include admin support INCLUDED_APPS
+-Change the url file to redirect to /admin, and must include new modules
+-add the admin.py file to the app! to make it accesible in the admin interface
+
+What is the Django path?
+cd /Library/Python/2.7/site-packages/django
+
+How did I find that?
+python -c "
+import sys
+sys.path = sys.path[1:]
+import django
+print(django.__path__)"
+
+
++++++++++++++++
+
+9. Creating VIEWS and URLS, in 3 steps
+-add module and funciton to views.py inside of app (portal)
+from django.http import HttpResponse
+def index(request):
+    return HttpResponse("Hello, world. You're at the poll index.")
+
+-CREATE A NEW FILE called urls.py inside of app (portal)
+-EDIT master urls.py in the project directory (apimedf)
+
+REPEAT: so every time you want to add a new url, you need to
+-Add a view function to the /portal/views.py
+-Reference that function/view in portals/urls.py
+
+
+10. CREATING TEMPLATES, that are access by Views
+https://docs.djangoproject.com/en/dev/topics/templates/
+{variable access}
+{% run python code %}
+
+
+11. URL referencing and Namespace
+
+Instead of :
+        <li><a href="/portal/{{ poll.id }}/">{{ poll.question }}</a></li>
+    For hardcoded links, use the name space and {%url%} feature
+    <li><a href="{% url 'detail' poll.id %}">{{ poll.question }}</a></li> 
+
+
+
+12. WRITING/RUNNING TESTS
+import datetime
+from django.utils import timezone
+from django.test import TestCase
+from polls.models import Poll
+
+class PollMethodTests(TestCase):
+
+    def test_was_published_recently_with_future_poll(self):
+        """
+        was_published_recently() should return False for polls whose
+        pub_date is in the future
+        """
+        future_poll = Poll(pub_date=timezone.now() + datetime.timedelta(days=30))
+        self.assertEqual(future_poll.was_published_recently(), False)
+        
+        
+python manage.py test polls
+
+
+
+    
+
