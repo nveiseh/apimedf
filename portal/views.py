@@ -68,7 +68,28 @@ def vote(request, poll_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('portal:results', args=(p.id,)))
-    
+
+def fin_vote(request, poll_id):
+    #return HttpResponse("You're voting on poll %s." % poll_id)
+    p = get_object_or_404(Poll, pk=poll_id)
+    try:
+        selected_choice = p.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        # Redisplay the poll voting form.
+        return render(request, 'polls/detail.html', {
+            'poll': p,
+            'error_message': "You didn't select a choice.",
+        })
+    else:
+        #This is where we add the new data to each field
+        
+        
+        selected_choice.votes += 1
+        selected_choice.save()
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return HttpResponseRedirect(reverse('portal:results', args=(p.id,)))    
 
 def csv_view(request, poll_id):
     '''
